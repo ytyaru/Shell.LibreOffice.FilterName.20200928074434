@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -Ceu
+#---------------------------------------------------------------------------
+# LibreOfficeのフィルタオプション一覧を取得する。
+# CreatedAt: 2020-09-27
+#---------------------------------------------------------------------------
+Run() {
+	THIS="$(realpath "${BASH_SOURCE:-0}")"; HERE="$(dirname "$THIS")"; PARENT="$(dirname "$HERE")"; THIS_NAME="$(basename "$THIS")"; APP_ROOT="$PARENT";
+	[ 0 -lt $# ] && { NAME=${1%.*}; EXT=${1#*.}; } || { NAME=$(date +%Y%m%d%H%M%S); EXT=ods; }
+	PATH_IN="/tmp/$NAME.csv"
+	touch "$PATH_IN"
+	FILTER='calc8'
+	[ 'fods' = "${EXT,,}" ] && FILTER='OpenDocument Spreadsheet Flat XML'
+	[ 'tsv' = "${EXT,,}" ] && FILTER='Text - txt - csv (StarCalc)'
+	soffice --convert-to "$EXT:$FILTER" --outdir "$(pwd)" "$PATH_IN"
+	rm "$PATH_IN"
+}
+Run "$@"
